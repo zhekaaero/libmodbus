@@ -872,6 +872,23 @@ int modbus_reply(modbus_t *ctx,
                                             name,
                                             MODBUS_MAX_READ_REGISTERS);
         } else if (mapping_address < 0 || (mapping_address + nb) > nb_registers) {
+	        if (ctx->quirks & MODBUS_QUIRK_SILENT_OUT_OF_BOUNDS) {
+                rsp_length = ctx->backend->build_response_basis(&sft, rsp);
+                rsp[rsp_length++] = nb << 1;
+                
+                for (int i = 0; i < nb; i++) {
+                    int current_address = mapping_address + i;
+                    uint16_t value = 0;
+                    
+                    if (current_address >= 0 && current_address < nb_registers) {
+                        value = tab_registers[current_address];
+                    }
+                    
+                    rsp[rsp_length++] = value >> 8;
+                    rsp[rsp_length++] = value & 0xFF;
+                }
+            }
+	    else
             rsp_length = response_exception(ctx,
                                             &sft,
                                             MODBUS_EXCEPTION_ILLEGAL_DATA_ADDRESS,

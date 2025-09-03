@@ -185,6 +185,7 @@ typedef enum {
     MODBUS_QUIRK_NONE = 0,
     MODBUS_QUIRK_MAX_SLAVE = (1 << 1),
     MODBUS_QUIRK_REPLY_TO_BROADCAST = (1 << 2),
+    MODBUS_QUIRK_SILENT_OUT_OF_BOUNDS = (1 << 3),
     MODBUS_QUIRK_ALL = 0xFF
 } modbus_quirks;
 
